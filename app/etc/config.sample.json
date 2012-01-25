@@ -1,0 +1,24 @@
+{
+	"environments": {
+		"local": {
+			"type": "development",
+			"hosts": [
+				"localhost",
+				"172.0.0.1"
+			]
+		}
+	},
+	"database": {
+		"host": "[database host, e.g. localhost]",
+		"database": "[database name]",
+		"user": "[database username]",
+		"password": "[database password]",
+		"charset": "[database charset, e.g. utf8]"
+	},
+	"web": {
+		"compress": true
+	},
+	"default": {
+	
+	}
+}
