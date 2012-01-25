@@ -1,2 +1,42 @@
+$base: 'http://localhost/ENT-sample-project/app/design/image';
+
 $font-family-normal: 'Maven Pro', sans-serif;
 $font-family-header: 'Maven Pro', sans-serif;
+
+@mixin rounded($top-left, $top-right, $bottom-left, $bottom-right) {
+	-webkit-border-top-left-radius: $top-left;
+	-khtml-border-radius-topleft: $top-left;	
+	-moz-border-radius-topleft: $top-left;
+	border-top-left-radius: $top-left;
+
+	-webkit-border-top-right-radius: $top-right;
+	-khtml-border-radius-topright: $top-right;	
+	-moz-border-radius-topright: $top-right;
+	border-top-right-radius: $top-right;
+
+	-webkit-border-bottom-left-radius: $bottom-left;
+	-khtml-border-radius-bottomleft: $bottom-left;	
+	-moz-border-radius-bottomleft: $bottom-left;
+	border-bottom-left-radius: $bottom-left;
+
+	-webkit-border-bottom-right-radius: $bottom-right;
+	-khtml-border-radius-bottomright: $bottom-right;	
+	-moz-border-radius-bottomright: $bottom-right;
+	border-bottom-right-radius: $bottom-right;
+}
+
+@mixin opacity($opacity) {
+	filter: alpha(opacity=$opacity);
+	-khtml-opacity: $opacity / 100;
+	-moz-opacity: $opacity / 100; 
+	opacity: $opacity / 100; 
+}
+
+@mixin gradient-linear($dir, $color-one, $color-two) {
+	background-color: $color-one;
+	background-image: -webkit-linear-gradient($dir, $color-one, $color-two);
+	background-image: -moz-linear-gradient($dir, $color-one, $color-two);
+	background-image: -ms-linear-gradient($dir, $color-one, $color-two);
+	background-image: -o-linear-gradient($dir, $color-one, $color-two);
+	background-image: linear-gradient($dir, $color-one, $color-two);
+}

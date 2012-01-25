@@ -1,12 +1,90 @@
 @import "variables";
 
-body {
+html, body {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
 	margin: 0;
 	font-family: $font-family-normal;
 	font-size: 12px;
 }
 
+body {
+	background: url('#{$base}/member/body-background.jpg') 0 0 #eee;
+}
+
 .page-center {
 	width: 960px;
 	margin: 0 auto;
+}
+
+#page-wrapper {
+	background: url('#{$base}/member/body-background-radial.png') no-repeat center center;
+	height: 100%;
+	width: 100%;
+}
+
+$width: 600px;
+$height: 400px;
+$diff: 24px;
+$rounded: 10px;
+$opacity: 75;
+
+#page-content-frame {
+	position: absolute;
+	width: $width;
+	height: $height;
+	margin-left: $width / 2 * -1;
+	margin-top: $height / 2 * -1;
+	top: 50%;
+	left: 50%;
+
+	background: #000;
+
+	@include opacity($opacity);
+	@include rounded($rounded, $rounded, $rounded, $rounded);
+}
+#page-content {
+	position: absolute;
+	width: $width - $diff;
+	height: $height - $diff;
+	margin-left: ($width - $diff) / 2 * -1;
+	margin-top: ($height - $diff) / 2 * -1;
+	top: 50%;
+	left: 50%;
+
+	background: #fff;
+
+	@include rounded(3px, 3px, 3px, 3px);
+	
+	.content {
+		padding: 0px 0px;
+
+		ul {
+			
+			li {
+				a {
+					display: block;
+					padding: 8px 16px;
+					border-bottom: 1px solid #ddd;
+
+					&:hover {
+						@include gradient-linear(top, #B3E0FF, #80CCFF);
+					}
+				}
+
+				&:first-child a {
+					@include rounded(3px, 3px, 0px, 0px);
+				}
+				
+				&:nth-child(even) a {
+					@include gradient-linear(bottom, #e5e5e5, #f5f5f5);
+
+					&:hover {
+						@include gradient-linear(top, #B3E0FF, #80CCFF);
+					}
+				}
+			}
+		}
+	}	
 }
