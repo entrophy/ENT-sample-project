@@ -1,0 +1,12 @@
+@import "variables";
+
+body {
+	margin: 0;
+	font-family: $font-family-normal;
+	font-size: 12px;
+}
+
+.page-center {
+	width: 960px;
+	margin: 0 auto;
+}

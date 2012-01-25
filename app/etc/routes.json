@@ -1,0 +1,26 @@
+{
+	"default": "member/misc/404",
+	"rewrites": {
+		"/": "misc/index/redirect",
+		"/404": "member/misc/404",
+		"/member/:user_id": "member/profile/view",
+		"/member/:user_id/blogs": "member/blog/list",
+		"/member/:user_id/blog/:id": "member/blog/view/id/:id",
+		"/member/test": "member/misc_test/controller",
+		"/member/404": "member/misc/404"
+	},
+	"routes": {
+		"member": {
+			"layout": "member",
+			"misc": {
+				"404": {
+					"layout": "member/misc/404"
+				},
+				"test": {
+					"layout": "test",
+					"minify": true
+				}
+			}
+		}
+	}
+}

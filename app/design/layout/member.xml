@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<layout>
+	<block name="root" template="member/html.phtml" layout-class="default">
+		<block name="head" template="member/head.phtml" />
+
+		<block name="top" template="member/top.phtml" />
+		
+		<block name="middle" template="member/middle.phtml">
+			<block name="content" />
+		</block>
+
+		<block name="bottom" template="member/bottom.phtml" />
+	</block>
+</layout>

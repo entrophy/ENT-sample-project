@@ -1,0 +1,7 @@
+.DS_Store
+.sass-cache/
+app/.sass-cache/
+app/design/.sass-cache/
+app/design/sass/.sass-cache/
+
+config.json
