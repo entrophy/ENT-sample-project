@@ -9,9 +9,10 @@
 	<!--[if IE 9]><body class="ie ie9 lte9"><![endif]-->
 	<!--[if gt IE 9]><body><![endif]-->
 	<!--[if !IE]><!--><body><!--<![endif]-->	
-
-	<?php echo $this->getChildElement('top'); ?>
-	<?php echo $this->getChildElement('middle'); ?>
-	<?php echo $this->getChildElement('bottom'); ?>
+		<div id="page-wrapper">
+			<?php echo $this->getChildElement('top'); ?>
+			<?php echo $this->getChildElement('middle'); ?>
+			<?php echo $this->getChildElement('bottom'); ?>
+		</div>
 	</body>
 </html>

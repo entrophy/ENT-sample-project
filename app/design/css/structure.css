@@ -1,8 +1,119 @@
-body {
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
   margin: 0;
   font-family: "Maven Pro", sans-serif;
   font-size: 12px; }
 
+body {
+  background: url("http://localhost/ENT-sample-project/app/design/image/member/body-background.jpg") 0 0 #eeeeee; }
+
 .page-center {
   width: 960px;
   margin: 0 auto; }
+
+#page-wrapper {
+  background: url("http://localhost/ENT-sample-project/app/design/image/member/body-background-radial.png") no-repeat center center;
+  height: 100%;
+  width: 100%; }
+
+#page-content-frame {
+  position: absolute;
+  width: 600px;
+  height: 400px;
+  margin-left: -300px;
+  margin-top: -200px;
+  top: 50%;
+  left: 50%;
+  background: #000;
+  filter: alpha(opacity=75);
+  -khtml-opacity: 0.75;
+  -moz-opacity: 0.75;
+  opacity: 0.75;
+  -webkit-border-top-left-radius: 10px;
+  -khtml-border-radius-topleft: 10px;
+  -moz-border-radius-topleft: 10px;
+  border-top-left-radius: 10px;
+  -webkit-border-top-right-radius: 10px;
+  -khtml-border-radius-topright: 10px;
+  -moz-border-radius-topright: 10px;
+  border-top-right-radius: 10px;
+  -webkit-border-bottom-left-radius: 10px;
+  -khtml-border-radius-bottomleft: 10px;
+  -moz-border-radius-bottomleft: 10px;
+  border-bottom-left-radius: 10px;
+  -webkit-border-bottom-right-radius: 10px;
+  -khtml-border-radius-bottomright: 10px;
+  -moz-border-radius-bottomright: 10px;
+  border-bottom-right-radius: 10px; }
+
+#page-content {
+  position: absolute;
+  width: 576px;
+  height: 376px;
+  margin-left: -288px;
+  margin-top: -188px;
+  top: 50%;
+  left: 50%;
+  background: #fff;
+  -webkit-border-top-left-radius: 3px;
+  -khtml-border-radius-topleft: 3px;
+  -moz-border-radius-topleft: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-top-right-radius: 3px;
+  -khtml-border-radius-topright: 3px;
+  -moz-border-radius-topright: 3px;
+  border-top-right-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -khtml-border-radius-bottomleft: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-bottom-left-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -khtml-border-radius-bottomright: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-bottom-right-radius: 3px; }
+  #page-content .content {
+    padding: 0px 0px; }
+    #page-content .content ul li a {
+      display: block;
+      padding: 8px 16px;
+      border-bottom: 1px solid #ddd; }
+      #page-content .content ul li a:hover {
+        background-color: #b3e0ff;
+        background-image: -webkit-linear-gradient(top, #b3e0ff, #80ccff);
+        background-image: -moz-linear-gradient(top, #b3e0ff, #80ccff);
+        background-image: -ms-linear-gradient(top, #b3e0ff, #80ccff);
+        background-image: -o-linear-gradient(top, #b3e0ff, #80ccff);
+        background-image: linear-gradient(top, #b3e0ff, #80ccff); }
+    #page-content .content ul li:first-child a {
+      -webkit-border-top-left-radius: 3px;
+      -khtml-border-radius-topleft: 3px;
+      -moz-border-radius-topleft: 3px;
+      border-top-left-radius: 3px;
+      -webkit-border-top-right-radius: 3px;
+      -khtml-border-radius-topright: 3px;
+      -moz-border-radius-topright: 3px;
+      border-top-right-radius: 3px;
+      -webkit-border-bottom-left-radius: 0px;
+      -khtml-border-radius-bottomleft: 0px;
+      -moz-border-radius-bottomleft: 0px;
+      border-bottom-left-radius: 0px;
+      -webkit-border-bottom-right-radius: 0px;
+      -khtml-border-radius-bottomright: 0px;
+      -moz-border-radius-bottomright: 0px;
+      border-bottom-right-radius: 0px; }
+    #page-content .content ul li:nth-child(even) a {
+      background-color: #e5e5e5;
+      background-image: -webkit-linear-gradient(bottom, #e5e5e5, #f5f5f5);
+      background-image: -moz-linear-gradient(bottom, #e5e5e5, #f5f5f5);
+      background-image: -ms-linear-gradient(bottom, #e5e5e5, #f5f5f5);
+      background-image: -o-linear-gradient(bottom, #e5e5e5, #f5f5f5);
+      background-image: linear-gradient(bottom, #e5e5e5, #f5f5f5); }
+      #page-content .content ul li:nth-child(even) a:hover {
+        background-color: #b3e0ff;
+        background-image: -webkit-linear-gradient(top, #b3e0ff, #80ccff);
+        background-image: -moz-linear-gradient(top, #b3e0ff, #80ccff);
+        background-image: -ms-linear-gradient(top, #b3e0ff, #80ccff);
+        background-image: -o-linear-gradient(top, #b3e0ff, #80ccff);
+        background-image: linear-gradient(top, #b3e0ff, #80ccff); }
