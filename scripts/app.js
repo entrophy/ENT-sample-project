@@ -5,22 +5,25 @@ App = {
 }
 
 TemplateManager = {
-	get: function(key, callback) {
+	init: function(key, callback) {
 		var self = this;
 		
 		this.cache = (this.cache || {});
 
 		if (!this.cache[key]) {
-			$.get(key, function(template) {
+			$.get(App.url(key), function(template) {
 				self.cache[key] = template;
 
 				callback.call(this, template);
 			});
 		}
+	},
+	get: function(key) {
+		return this.cache[key];
 	}
 }
 
-/// models and collections
+// models
 
 Link = Backbone.Model.extend({
 	defaults: {
@@ -30,44 +33,80 @@ Link = Backbone.Model.extend({
 	}
 });
 
+// collections
+
 LinkCollection = Backbone.Collection.extend({
 	model: Link
 });
 
+// views
 
-/// views
+LinkListView = Backbone.View.extend({
+	initialize: function() {
+		var self = this;
+		
+		this.el = $('#links');
+		this.ids = [];
 
-window.LinkListView = Backbone.View.extend({
-	el: '#links',
+		this.collection.bind('add', this.render, this)
+	},
 	render: function() {
-		_.forEach(this.links, function(link) {
-			//$(this.el).append(new window.LinkItemView(link).render().el);
+		_.forEach(this.collection.models, function(link) {
+			if (!_.include(this.ids, link.id)) {
+				this.el.append(new window.LinkItemView({ model: link }).render().el);
+				this.ids.push(link.id);
+			}
 		}, this);
 
 		return this;
 	}
 });
 
-TemplateManager.get(App.url('member/link/item'), function(template) {
-	window.LinkItemView = Backbone.View.extend({
-		tagName: 'li',
-		render: function() {
-			//this.el = Mustache.render(template, this.link.toJSON());
+LinkItemView = Backbone.View.extend({
+	initialize: function() {
+		this.template = TemplateManager.get('member/link/item');
+	},
+	render: function() {
+		this.el = Mustache.render(this.template, this.model.toJSON());
 
-			return this;
-		}
-	});
+		return this;
+	}
 });
 
-$(document).ready(function() {
+// dispatch
+
+TemplateManager.init('member/link/item', function(templates) {
 	links = new LinkCollection();
 
-	linkListView = new LinkListView(links);
-	
-	links.add(new Link({
-		id: 8,
-		title: 'Google',
-		url: 'http://www.google.dk'
-	}));
-	
+	linkListView = new window.LinkListView({
+		collection: links
+	});
+
+	links.add([
+		new Link({
+			id: 8,
+			title: 'Google',
+			url: 'http://www.google.dk/'
+		}),
+		new Link({
+			id: 7,
+			title: 'Reddit',
+			url: 'http://www.reddit.com/'
+		}),
+		new Link({
+			id: 9,
+			title: 'Anti Sleep Pilot',
+			url: 'http://www.antisleeppilot.com/'
+		}),
+		new Link({
+			id: 10,
+			title: 'Imgur',
+			url: 'http://www.imgur.com/'
+		}),
+		new Link({
+			id: 11,
+			title: 'Politiken',
+			url: 'http://www.politiken.dk/'
+		})
+	]);
 });
