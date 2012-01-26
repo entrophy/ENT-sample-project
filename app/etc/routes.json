@@ -11,6 +11,7 @@
 	},
 	"routes": {
 		"member": {
+			"view": "member/abstract",
 			"layout": "member",
 			"misc": {
 				"404": {

@@ -47,7 +47,7 @@ window.LinkListView = Backbone.View.extend({
 		return this;
 	}
 });
-/*
+
 TemplateManager.get(App.url('member/link/item'), function(template) {
 	window.LinkItemView = Backbone.View.extend({
 		tagName: 'li',
@@ -58,7 +58,7 @@ TemplateManager.get(App.url('member/link/item'), function(template) {
 		}
 	});
 });
-*/
+
 $(document).ready(function() {
 	links = new LinkCollection();
 

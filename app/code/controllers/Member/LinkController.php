@@ -8,7 +8,7 @@ class Member_LinkController extends ENT_Controller {
 	}
 
 	public function itemAction() {
-		$this->renderLayout(false);
+		#$this->renderLayout(false);
 	}
 }
 ?>
