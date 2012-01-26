@@ -1,0 +1,148 @@
+<div class="clock">
+	<div class="digit-one digit">
+		<div class="digit-upper">
+			<span class="shutter"></span>
+			<span class="number"></span>
+		</div>
+		<div class="digit-lower">
+			<span class="shutter"></span>
+			<span class="number"></span>
+		</div>
+	</div>
+
+	<div class="digit-two digit">
+		<div class="digit-upper">
+			<span class="shutter"></span>
+			<span class="number"></span>
+		</div>
+		<div class="digit-lower">
+			<span class="shutter"></span>
+			<span class="number"></span>
+		</div>
+	</div>
+</div>
+
+<br /><br /><br /><br />
+<button class="count-button">Count</button>
+
+<script type="text/javascript">
+	var Digit =	 function() {
+		this.initialize.apply(this, Array.prototype.slice.call(arguments));
+	};
+
+	Digit.prototype = {
+		initialize: function(options) {
+			var self = this;
+			
+			this.min = (options.min || 0);
+			this.max = (options.max || 9);
+			this.number = (options.number || 0);
+			this.element = options.element;
+			this.interval = (options.interval || null);
+			this.delay = (options.delay || 0);
+
+			this.duration = {
+				flip: parseInt((options.duration.flip || 0)),
+				wait: parseInt((options.duration.wait || 0)),
+			};
+
+			this.upper = {
+				shutter: this.element.find('.digit-upper .shutter'),
+				number: this.element.find('.digit-upper .number')
+			};
+
+			this.lower = {
+				shutter: this.element.find('.digit-lower .shutter'),
+				number: this.element.find('.digit-lower .number')
+			};
+
+			this.upper.number.html(this.number);
+			this.lower.number.html(this.number);
+
+			this.height = this.element.children('.digit-upper').height();
+
+			setTimeout(function() {
+				self.start();
+			}, this.delay);
+		},
+		start: function() {
+			var self = this;
+			
+			if (this.interval) {
+				this._interval = setInterval(function() {
+					self.shift();
+				}, this.interval);
+			}
+		},
+		stop: function() {
+			if (this._interval) {
+				clearInterval(this._interval);
+			}
+		},
+		shift: function() {
+			var self = this;
+			var nextNumber = self.nextNumber();
+			
+			self.upper.shutter.animate({
+				top: "+="+self.height+"px"
+			}, self.duration.flip, function() {
+				self.upper.number.html(nextNumber);
+				
+				setTimeout(function() {
+					self.upper.shutter.animate({
+						top: "+="+self.height+"px"
+					}, self.duration.flip, function() {
+						self.upper.shutter.css('top', "-"+self.height+"px");
+
+						setTimeout(function() {
+							self.lower.shutter.animate({
+								top: "+="+self.height+"px"
+							}, self.duration.flip, function() {
+								self.lower.number.html(nextNumber);
+				
+								setTimeout(function() {
+									self.lower.shutter.animate({
+										top: "+="+self.height+"px"
+									}, self.duration.flip, function() {
+										self.lower.shutter.css('top', "-"+self.height+"px");
+									});
+								}, self.duration.wait);
+							});
+						}, self.duration.wait);
+					});
+				}, self.duration.wait);
+			});
+		},
+		nextNumber: function() {
+			return (this.number = this.number === this.max ? this.min : this.number + 1);
+		}
+	}
+	
+	$(document).ready(function() {
+		one = new Digit({
+			element: $('.digit-one'),
+			duration: {
+				flip: 50,
+				wait: 100
+			}
+		});
+
+		two = new Digit({
+			element: $('.digit-two'),
+			duration: {
+				flip: 50,
+				wait: 100
+			}
+		});
+
+		$('.count-button').click(function(event) {
+			two.shift();
+
+			if (two.number == 0) {
+				one.shift();
+			}
+
+			return false;
+		});
+	});
+</script>
