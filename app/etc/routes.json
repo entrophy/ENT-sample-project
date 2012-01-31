@@ -10,6 +10,9 @@
 		"/member/404": "member/misc/404"
 	},
 	"routes": {
+		"api": {
+			"default": "api/misc/404"
+		},
 		"member": {
 			"view": "member/abstract",
 			"layout": "member",

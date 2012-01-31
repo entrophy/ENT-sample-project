@@ -4,6 +4,7 @@ App = {
 	}
 }
 
+Backbone.emulateJSON = true;
 TemplateManager = {
 	init: function(key, callback) {
 		var self = this;
@@ -27,7 +28,6 @@ TemplateManager = {
 
 Link = Backbone.Model.extend({
 	defaults: {
-		id: 0,
 		title: '',
 		url: ''
 	}
@@ -36,6 +36,7 @@ Link = Backbone.Model.extend({
 // collections
 
 LinkCollection = Backbone.Collection.extend({
+	url: App.url('api/links'),
 	model: Link
 });
 
@@ -48,7 +49,8 @@ LinkListView = Backbone.View.extend({
 		this.el = $('#links');
 		this.ids = [];
 
-		this.collection.bind('add', this.render, this)
+		this.collection.bind('reset', this.render, this);
+		this.collection.bind('add', this.render, this);
 	},
 	render: function() {
 		_.forEach(this.collection.models, function(link) {
@@ -73,7 +75,6 @@ LinkItemView = Backbone.View.extend({
 	}
 });
 
-// dispatch
 
 TemplateManager.init('member/link/item', function(templates) {
 	links = new LinkCollection();
@@ -82,31 +83,5 @@ TemplateManager.init('member/link/item', function(templates) {
 		collection: links
 	});
 
-	links.add([
-		new Link({
-			id: 8,
-			title: 'Google',
-			url: 'http://www.google.dk/'
-		}),
-		new Link({
-			id: 7,
-			title: 'Reddit',
-			url: 'http://www.reddit.com/'
-		}),
-		new Link({
-			id: 9,
-			title: 'Anti Sleep Pilot',
-			url: 'http://www.antisleeppilot.com/'
-		}),
-		new Link({
-			id: 10,
-			title: 'Imgur',
-			url: 'http://www.imgur.com/'
-		}),
-		new Link({
-			id: 11,
-			title: 'Politiken',
-			url: 'http://www.politiken.dk/'
-		})
-	]);
+	links.fetch();
 });
