@@ -51,11 +51,20 @@ LinkListView = Backbone.View.extend({
 
 		this.collection.bind('reset', this.render, this);
 		this.collection.bind('add', this.render, this);
+		this.collection.bind('remove', this.remove, this);
+	},
+	remove: function(link) {
+		this.el.find('#link-'+link.id).remove();
 	},
 	render: function() {
+		var self = this;
 		_.forEach(this.collection.models, function(link) {
 			if (!_.include(this.ids, link.id)) {
-				this.el.append(new window.LinkItemView({ model: link }).render().el);
+				this.el.append(new window.LinkItemView({ 
+					model: link,
+					collection: self.collection,
+					id: 'link-'+link.id		
+				}).render().el);
 				this.ids.push(link.id);
 			}
 		}, this);
@@ -65,12 +74,22 @@ LinkListView = Backbone.View.extend({
 });
 
 LinkItemView = Backbone.View.extend({
+	tagName: 'li',
+	className: 'link',
+	events: {
+		"click .delete": "remove"
+	},
+	remove: function() {
+		this.model.destroy();
+		this.collection.remove(this.model);
+		return false;
+	},
 	initialize: function() {
+		this.id = 'link-'+this.model.id;
 		this.template = TemplateManager.get('member/link/item');
 	},
 	render: function() {
-		this.el = Mustache.render(this.template, this.model.toJSON());
-
+		$(this.el).html(Mustache.render(this.template, this.model.toJSON()));
 		return this;
 	}
 });

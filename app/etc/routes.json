@@ -2,6 +2,7 @@
 	"default": "member/misc/404",
 	"rewrites": {
 		"/": "misc/index/redirect",
+		"/api/links/:id": "api/links/_/id/:id",
 		"/404": "member/misc/404",
 		"/member/:user_id": "member/profile/view",
 		"/member/:user_id/blogs": "member/blog/list",
@@ -10,9 +11,6 @@
 		"/member/404": "member/misc/404"
 	},
 	"routes": {
-		"api": {
-			"default": "api/misc/404"
-		},
 		"member": {
 			"view": "member/abstract",
 			"layout": "member",

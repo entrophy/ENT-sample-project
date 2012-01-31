@@ -75,6 +75,13 @@ body {
   border-bottom-right-radius: 3px; }
   #page-content .content {
     padding: 0px 0px; }
+    #page-content .content ul li .delete {
+      display: block;
+      padding: 8px 16px;
+      border-bottom: 1px solid #ddd;
+      float: right;
+      color: red;
+      cursor: pointer; }
     #page-content .content ul li a {
       display: block;
       padding: 8px 16px;
