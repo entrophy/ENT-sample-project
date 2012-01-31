@@ -49,9 +49,9 @@ LinkListView = Backbone.View.extend({
 		this.el = $('#links');
 		this.ids = [];
 
-		this.collection.bind('reset', this.render, this);
-		this.collection.bind('add', this.render, this);
-		this.collection.bind('remove', this.remove, this);
+		this.collection.on('reset', this.render, this);
+		this.collection.on('add', this.render, this);
+		this.collection.on('remove', this.remove, this);
 	},
 	remove: function(link) {
 		this.el.find('#link-'+link.id).remove();
