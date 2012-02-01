@@ -1,3 +1,5 @@
+Backbone.emulateJSON = true;
+
 Backbone.LayoutManager.configure({
 	render: function(template, context) {
 		return Mustache.render(template, context);
@@ -5,6 +7,7 @@ Backbone.LayoutManager.configure({
 });
 
 Backbone.LayoutManager.View.prototype.serialize = function() {
+	return this.model;
 	return this.model.toJSON();
 };
 
@@ -18,13 +21,14 @@ jQuery(function($) {
 		},
 
 		index: function() {
-			alert("her");
 			var main = new Backbone.LayoutManager({
 				template: "#main"
 			});
 
 			links = new Link.Collection();
-			links.add(new Link.Model({
+			links.fetch();
+			
+			/*links.add(new Link.Model({
 				id: 1,
 				url: 'http://www.google.com/',
 				title: 'Google'
@@ -33,7 +37,7 @@ jQuery(function($) {
 				id: 2,
 				url: 'http://www.reddit.com/',
 				title: 'Reddit'
-			}));
+			}));*/
 		
 			
 			var list = main.view('.list', new Link.Views.List({ collection: links }));
@@ -56,7 +60,9 @@ jQuery(function($) {
 			});
 
 			links = new Link.Collection();
-			links.add(new Link.Model({
+			links.fetch();
+
+			/*links.add(new Link.Model({
 				id: 1,
 				url: 'http://www.google.com/',
 				title: 'Google'
@@ -65,7 +71,7 @@ jQuery(function($) {
 				id: 2,
 				url: 'http://www.reddit.com/',
 				title: 'Reddit'
-			}));
+			}));*/
 		
 			var detail = detailed.view('.detailed', new Link.Views.Detail({ model: links.get(id) }));
 
@@ -76,9 +82,17 @@ jQuery(function($) {
 	});
 
 	app.router = new Router();
-
+	
 	Backbone.history.start({ pushState: true, root: '/ENT-sample-project/member/link/view/' });
+
+	app.router.navigate(""); // why is this necassery?
 });
+
+Helper = {
+	url: function(url) {
+		return 'http://localhost/ENT-sample-project/'+url;
+	}
+}
 
 Link = {};
 
@@ -87,6 +101,7 @@ Link.Model = Backbone.Model.extend({
 });
 
 Link.Collection = Backbone.Collection.extend({
+	url: Helper.url('api/links'),
 	model: Link.Model
 });
 
