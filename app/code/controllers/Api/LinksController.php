@@ -1,15 +1,15 @@
 <?php
-class Api_LinksController extends ENT_Controller_REST {
+class Api_LinksController extends Api_AbstractController {
 	public function createAction() {
 		$link = ENT::getModule('link');
 		$link->save(json_decode($this->getRequest()->getPost('model'), true));
 		
-		echo $link->toJSON();
+		$this->sendModule($link);
 	}
 	
 	public function readAction() {
 		$collection = ENT::getCollection('link');
-		echo $collection->toJSON();
+		$this->sendCollection($collection);
 	}
 	
 	public function updateAction() {
@@ -17,6 +17,7 @@ class Api_LinksController extends ENT_Controller_REST {
 			$link = Link::load($id);
 			if ($link->exists) {
 				$link->save(json_decode($this->getRequest()->getPost('model'), true));
+				$this->sendModule($link);
 			}
 		}
 	}

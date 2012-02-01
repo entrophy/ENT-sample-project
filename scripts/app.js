@@ -1,3 +1,20 @@
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
 App = {
 	url: function(url) {
 		return 'http://localhost/ENT-sample-project/'+url;
@@ -43,24 +60,32 @@ LinkCollection = Backbone.Collection.extend({
 // views
 
 LinkListView = Backbone.View.extend({
+	events: {
+		"submit .create form": "create"
+	},
 	initialize: function() {
 		var self = this;
 		
-		this.el = $('#links');
 		this.ids = [];
 
 		this.collection.on('reset', this.render, this);
 		this.collection.on('add', this.render, this);
 		this.collection.on('remove', this.remove, this);
 	},
+	create: function() {
+		var values = this.$el.find('.create form').serializeObject();
+		this.$el.find('.create form').find('input').val('');
+		this.collection.create(values);
+		return false;
+	},
 	remove: function(link) {
-		this.el.find('#link-'+link.id).remove();
+		this.$el.find('#link-'+link.id).remove();
 	},
 	render: function() {
 		var self = this;
 		_.forEach(this.collection.models, function(link) {
 			if (!_.include(this.ids, link.id)) {
-				this.el.append(new window.LinkItemView({ 
+				this.$el.find('#links').append(new window.LinkItemView({ 
 					model: link,
 					collection: self.collection,
 					id: 'link-'+link.id		
@@ -89,18 +114,20 @@ LinkItemView = Backbone.View.extend({
 		this.template = TemplateManager.get('member/link/item');
 	},
 	render: function() {
-		$(this.el).html(Mustache.render(this.template, this.model.toJSON()));
+		this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 		return this;
 	}
 });
 
+$(document).ready(function () {
+	TemplateManager.init('member/link/item', function(templates) {
+		links = new LinkCollection();
 
-TemplateManager.init('member/link/item', function(templates) {
-	links = new LinkCollection();
+		linkListView = new window.LinkListView({
+			el: '#page-content',
+			collection: links
+		});
 
-	linkListView = new window.LinkListView({
-		collection: links
+		links.fetch();
 	});
-
-	links.fetch();
 });

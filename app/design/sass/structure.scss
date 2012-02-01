@@ -94,5 +94,22 @@ $opacity: 75;
 				}
 			}
 		}
+		
+		.create {
+		
+		}
 	}	
+}
+
+.input-submit {
+	overflow: hidden;
+	height: 1px;
+	width: 1px;
+	position: relative;
+		left: -100000px;
+	
+	input {
+		position: relative;
+		left: -100000px;
+	}
 }

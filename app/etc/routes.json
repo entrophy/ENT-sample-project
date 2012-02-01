@@ -1,14 +1,14 @@
 {
 	"default": "member/misc/404",
 	"rewrites": {
-		"/": "misc/index/redirect",
-		"/api/links/:id": "api/links/_/id/:id",
-		"/404": "member/misc/404",
-		"/member/:user_id": "member/profile/view",
-		"/member/:user_id/blogs": "member/blog/list",
-		"/member/:user_id/blog/:id": "member/blog/view/id/:id",
-		"/member/test": "member/misc_test/controller",
-		"/member/404": "member/misc/404"
+		"": "misc/index/redirect",
+		"api/links/:id": "api/links//id/:id",
+		"404": "member/misc/404",
+		"member/:user_id": "member/profile/view",
+		"member/:user_id/blogs": "member/blog/list",
+		"member/:user_id/blog/:id": "member/blog/view/id/:id",
+		"member/test": "member/misc_test/controller",
+		"member/404": "member/misc/404"
 	},
 	"routes": {
 		"member": {

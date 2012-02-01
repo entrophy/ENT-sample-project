@@ -151,6 +151,16 @@ body {
         background-image: -o-linear-gradient(top, #b3e0ff, #80ccff);
         background-image: linear-gradient(top, #b3e0ff, #80ccff); }
 
+.input-submit {
+  overflow: hidden;
+  height: 1px;
+  width: 1px;
+  position: relative;
+  left: -100000px; }
+  .input-submit input {
+    position: relative;
+    left: -100000px; }
+
 .clock {
   margin: 20px 0px 0px 20px; }
 
