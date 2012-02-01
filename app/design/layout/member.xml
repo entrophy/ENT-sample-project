@@ -10,5 +10,7 @@
 		</block>
 
 		<block name="bottom" template="member/bottom.phtml" />
+		
+		<block name="javascript" template="member/javascript.phtml" />
 	</block>
 </layout>

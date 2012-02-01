@@ -2,7 +2,7 @@
 date_default_timezone_set('Europe/Copenhagen');
 ini_set('upload_tmp_dir','var/tmp'); 
 
-$root_path = '/home/mick/www/';
+$root_path = '/users/hhau/work/source/';
 $ent_path = $root_path.'ENT/';
 require_once $ent_path.'ENT.php';
 

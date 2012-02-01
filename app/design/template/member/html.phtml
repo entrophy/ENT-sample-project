@@ -9,10 +9,70 @@
 	<!--[if IE 9]><body class="ie ie9 lte9"><![endif]-->
 	<!--[if gt IE 9]><body><![endif]-->
 	<!--[if !IE]><!--><body><!--<![endif]-->	
-		<div id="page-wrapper">
+		<div id="page-wrapper">			
+			<?php /*
 			<?php echo $this->getChildElement('top'); ?>
 			<?php echo $this->getChildElement('middle'); ?>
 			<?php echo $this->getChildElement('bottom'); ?>
+			*/ ?>
 		</div>
+
+		<script type="layout" id="main">
+			<div id="page-content-wrapper">
+				<div class="page-content">
+					<div class="page-content-left">
+						<div class="box">
+							<div class="box-content list">
+								list goes here
+							</div>
+						</div>
+					</div>
+					
+					<div class="page-content-right">
+						<div class="box">
+							<div class="box-content detail">
+								detail goes here
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<script type="layout" id="detailed">
+			<div id="page-content-wrapper">
+				<div class="page-content">
+					<div class="box">
+						<div class="box-content detailed">
+							detailed details goes here
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<script type="template" id="list">
+			<ul id="list">
+				{{#links}}
+				<li>
+					<a href="">
+						{{title}}
+					</a>
+				</li>
+				{{/links}}
+			</ul>
+		</script>
+
+		<script type="template" id="detail">
+			<div id="detail">
+				<h2>{{title}}</h2>
+				<h4>{{url}}</h4>
+
+				<a href="">Show details</a>
+			</div>
+		</script>
+
+		
+		<?php echo $this->getChildElement('javascript'); ?>
 	</body>
 </html>
