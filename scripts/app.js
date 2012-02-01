@@ -93,6 +93,8 @@ LinkListView = Backbone.View.extend({
 				this.ids.push(link.id);
 			}
 		}, this);
+		
+		this.$el.find('#links').sortable();
 
 		return this;
 	}
