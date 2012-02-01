@@ -1,3 +1,20 @@
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
 Backbone.emulateJSON = true;
 
 Backbone.LayoutManager.configure({
@@ -7,8 +24,7 @@ Backbone.LayoutManager.configure({
 });
 
 Backbone.LayoutManager.View.prototype.serialize = function() {
-	return this.model;
-	return this.model.toJSON();
+	return this.model ? this.model.toJSON() : this.model;
 };
 
 var app = {};
@@ -25,32 +41,25 @@ jQuery(function($) {
 				template: "#main"
 			});
 
-			links = new Link.Collection();
-			links.fetch();
+			app.links = new Link.Collection();
+
 			
-			/*links.add(new Link.Model({
-				id: 1,
-				url: 'http://www.google.com/',
-				title: 'Google'
-			}));
-			links.add(new Link.Model({
-				id: 2,
-				url: 'http://www.reddit.com/',
-				title: 'Reddit'
-			}));*/
-		
-			
-			var list = main.view('.list', new Link.Views.List({ collection: links }));
-			var detail = main.view('.detail', new Link.Views.Detail({ model: links.at(0) }));
+			var list = main.view('.list', new Link.Views.List({ collection: app.links }));
+			var detail = main.view('.detail', new Link.Views.Detail());
+			var create = main.view('.create', new Link.Views.Create({ collection: app.links }));
 
 			list.bind('update', function(model) {
 				detail.model = model;
-				
 				detail.render();
 			});
 
 			main.render(function(contents) {
 				$('#page-wrapper').html(contents);
+			});
+
+			app.links.fetch().success(function() {
+				detail.model = app.links.at(0);
+				detail.render();
 			});
 		},
 		
@@ -59,21 +68,7 @@ jQuery(function($) {
 				template: "#detailed"
 			});
 
-			links = new Link.Collection();
-			links.fetch();
-
-			/*links.add(new Link.Model({
-				id: 1,
-				url: 'http://www.google.com/',
-				title: 'Google'
-			}));
-			links.add(new Link.Model({
-				id: 2,
-				url: 'http://www.reddit.com/',
-				title: 'Reddit'
-			}));*/
-		
-			var detail = detailed.view('.detailed', new Link.Views.Detail({ model: links.get(id) }));
+			var detail = detailed.view('.detailed', new Link.Views.Detail({ model: app.links.get(id) }));
 
 			detailed.render(function(contents) {
 				$('#page-wrapper').html(contents);
@@ -85,7 +80,7 @@ jQuery(function($) {
 	
 	Backbone.history.start({ pushState: true, root: '/ENT-sample-project/member/link/view/' });
 
-	app.router.navigate(""); // why is this necassery?
+	app.router.navigate("");
 });
 
 Helper = {
@@ -97,7 +92,10 @@ Helper = {
 Link = {};
 
 Link.Model = Backbone.Model.extend({
-
+	defaults: {
+		title: '',
+		url: ''
+	}
 });
 
 Link.Collection = Backbone.Collection.extend({
@@ -107,6 +105,23 @@ Link.Collection = Backbone.Collection.extend({
 
 Link.Views = {};
 
+Link.Views.Create = Backbone.LayoutManager.View.extend({
+	template: '#create',
+
+	events: {
+		'submit form': 'create'
+	},
+
+	create: function() {
+		var values = this.$el.find('form').serializeObject();
+		this.$el.find('form input').val('');
+
+		this.collection.create(values);
+
+		return false;
+	}
+});
+
 Link.Views.List = Backbone.LayoutManager.View.extend({
 	template: '#list',
 
@@ -114,9 +129,23 @@ Link.Views.List = Backbone.LayoutManager.View.extend({
 		'click li a': 'update'
 	},
 
+	initialize: function() {
+		this.collection.bind('add', function() {
+			this.render();
+		}, this);
+		
+		this.collection.bind('reset', function() {
+			this.render();
+		}, this);
+		
+		this.collection.bind('remove', function() {
+			this.render();
+		}, this);
+	},
+
 	update: function(event) {
-		var index = $(event.target).parent().index();
-		var model = this.collection.at(index);
+		var id = $(event.target).attr('rel');
+		var model = this.collection.get(id);
 		
 		this.trigger('update', model);
 
@@ -132,7 +161,19 @@ Link.Views.Detail = Backbone.LayoutManager.View.extend({
 	template: '#detail',
 
 	events: {
-		'click a': 'show'
+		'click a.show': 'show',
+		'click a.remove': 'remove'
+	},
+
+	remove: function() {
+		this.model.destroy();
+		
+		app.links.remove(this.model);
+
+		this.model = app.links.at(0);
+		this.render();
+
+		return false;
 	},
 
 	show: function() {

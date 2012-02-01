@@ -64,6 +64,7 @@ body {
 .box {
   position: relative;
   padding: 12px;
+  margin-bottom: 16px;
   background: #000;
   background: rgba(0, 0, 0, 0.75);
   -webkit-border-top-left-radius: 10px;
@@ -166,6 +167,16 @@ ul#list li:nth-child(even) a {
 
 div#detail {
   padding: 8px 16px; }
+
+form {
+  padding: 8px 16px; }
+  form label {
+    display: inline-block;
+    width: 40px; }
+  form input {
+    border: 1px solid #aaa;
+    padding: 5px;
+    outline: none; }
 
 .input-submit {
   overflow: hidden;

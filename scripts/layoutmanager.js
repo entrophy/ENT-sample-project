@@ -1,9 +1,13 @@
 /*!
- * backbone.layoutmanager.js v0.1.1
+ * backbone.layoutmanager.js v0.1.2
  * Copyright 2011, Tim Branyen (@tbranyen)
  * backbone.layoutmanager.js may be freely distributed under the MIT license.
  */
 (function(Backbone, _, $) {
+
+// Appease jshint which is unable to understand function hoisting and claims
+// these functions are undefined;
+var LayoutManager, renderViews, wrappedRender;
 
 // Allows the setting of multiple views instead of a single view
 function setViews(views) {
@@ -14,11 +18,11 @@ function setViews(views) {
   }, this);
 }
 
-function view(name, subView) {
+function viewMethod(name, subView) {
   // Maintain a reference to the manager
   var manager = this;
   // Shorthand options
-  var options = this.options;
+  var options = _.extend({}, this.options, LayoutManager.prototype.options);
 
   // Returns an object that provides asynchronous capabilities.
   function async(done) {
@@ -47,12 +51,11 @@ function view(name, subView) {
     function templateDone(context, contents) {
       // Ensure the cache is up-to-date.
       LayoutManager.cache(url, contents);
-	
+
       // Render the View into the el property.
       options.html(view.el, options.render(contents, context));
 
-      // Signal that the fetching is done, wrap in a setTimeout to ensure,
-      // that synchronous calls do not break the done being triggered.
+      // Resolve partials with the View element.
       handler.partial.resolve(view.el);
 
       // Render any additional views.
@@ -76,7 +79,7 @@ function view(name, subView) {
         viewPartial.push(subView); 
 
         // Add the reusable view method to all views added this way as well.
-        subView.view = view;
+        subView.view = viewMethod;
 
         // Add the reusable bulk setViews method as well.
         subView.setViews = setViews;
@@ -108,6 +111,9 @@ function view(name, subView) {
         
         // Check if contents are already cached
         if (contents = LayoutManager.cache(url)) {
+          // Make this function act asynchronous to avoid issues with event
+          // binding and other unintentional consequences of different timing
+          // from synchronous operations.
           templateDone(context, contents, url);
 
           return handler;
@@ -133,32 +139,47 @@ function view(name, subView) {
 
   // Wraps the View's original render to supply a reusable render method
   function wrappedRender(root, name, view) {
+    var hasRendered;
     var original = view.render;
 
     // This render method accepts no arguments and will simply update the
     // SubView from the rules provided inside the render method.
     return function() {
-      // Always remove the view when re-rendering
-      view.remove();
-
       // Render into a variable
       var viewDeferred = original.call(view, viewRender);
+
+      // If the view has already been rendered, do not remove and re-add,
+      // simply re-render.
+      if (hasRendered) {
+        // If the view contains a views object, iterate over it as well
+        if (_.isObject(view.options.views)) {
+          renderViews(view, view.options.views);
+        }
+
+        // This will be useful to allow wrapped renders to know when they are
+        // done as well
+        viewDeferred.partial.then(function(el) {
+          return viewDeferred.resolve(el);
+        });
+
+        return viewDeferred;
+      }
 
       // Internal partial deferred used for injecting into layout
       viewDeferred.partial.then(function(el) {
         // Apply partially
         options.partial(root.el, name, el, view.options.append);
 
+        // Let us know the view has been rendered
+        hasRendered = true;
+
         // Once added to the DOM resolve original deferred, with the correct
         // view element.
-        viewDeferred.resolve(view.el).then(function(el) {
-          // Ensure events are rebound
-          view.delegateEvents();
-        });
+        viewDeferred.resolve(view.el);
 
         // If the view contains a views object, iterate over it as well
         if (_.isObject(view.options.views)) {
-          return renderViews(view, view.options.views);
+          renderViews(view, view.options.views);
         }
       });
 
@@ -176,6 +197,7 @@ function view(name, subView) {
     // asynchronous if the done callback is provided.
     function processView(view, name, done) {
       view.remove();
+
       // Wrap a new reusable render method, ensure that a wrapped flag is 
       // set to prevent double wrapping.
       if (!view.render._wrapped) {
@@ -184,10 +206,12 @@ function view(name, subView) {
         // This flag is used to determine which render method is being looked
         // at.
         view.render._wrapped = true;
-      }      
-      
+      }
+
       // Render each View
-      view.render().then(done);
+      view.render().then(done).then(function() {
+        view.delegateEvents();
+      });
     }
 
     // For each view access the view object and partial name
@@ -212,9 +236,6 @@ function view(name, subView) {
 
       // If the views is an array render out as a list
       if (_.isArray(view)) {
-        // Reset the `el` state
-        options.partial(root.el, name, "");
-
         iterateViews(_.clone(view));
       // Process a single view
       } else {
@@ -234,7 +255,7 @@ function view(name, subView) {
   }
 
   // Add the reusable view function reference to every view added this way.
-  subView.view = view;
+  subView.view = viewMethod;
   // Add the reusable bulk setViews method as well.
   subView.setViews = setViews;
 
@@ -242,7 +263,7 @@ function view(name, subView) {
 }
 
 // LayoutManager at its core is specifically a Backbone.View
-var LayoutManager = Backbone.LayoutManager = Backbone.View.extend({
+LayoutManager = Backbone.LayoutManager = Backbone.View.extend({
   initialize: function() {
     var prefix, url;
     // Handle views support
@@ -307,7 +328,7 @@ var LayoutManager = Backbone.LayoutManager = Backbone.View.extend({
   },
   
   // Provided to a top level layout to allow direct assignment of a SubView.
-  view: view,
+  view: viewMethod,
 
   // This allows a bulk replacement of all existing views
   setViews: setViews,
@@ -353,6 +374,10 @@ var LayoutManager = Backbone.LayoutManager = Backbone.View.extend({
       // Set the layout
       options.html(manager.el, options.render(contents, context));
 
+      // Removes the shared element from the DOM before injection, this
+      // prevents events from being removed by $.fn.cleanData.
+      options.detach(manager.el);
+
       // Render the top-level views from the LayoutManager
       _.each(manager.views, function(view) {
         view.render();
@@ -373,7 +398,7 @@ var LayoutManager = Backbone.LayoutManager = Backbone.View.extend({
     } else {
       url = options.template;
     }
-    
+
     // Check if contents are already cached
     if (contents = LayoutManager.cache(url)) {
       return layoutDone(contents);
@@ -382,10 +407,10 @@ var LayoutManager = Backbone.LayoutManager = Backbone.View.extend({
     // Get layout contents
     handler = async(layoutDone);
     contents = options.fetch.call(handler, url);
-    
+
     // If the function was synchronous, continue execution.
     if (!handler._isAsync) {
-      return layoutDone(contents);
+      layoutDone(contents);
     }
   }
 },
@@ -474,6 +499,11 @@ Backbone.LayoutManager.prototype.options = {
     $(root).append(el);
   },
 
+  // Abstract out the $.fn.detach method
+  detach: function(el) {
+    $(el).detach();
+  },
+
   // By default, render using underscore's templating.
   render: function(template, context) {
     return _.template(template)(context);
@@ -482,5 +512,3 @@ Backbone.LayoutManager.prototype.options = {
 };
 
 })(this.Backbone, this._, this.jQuery);
-
-
