@@ -1,4 +1,3 @@
-
 Backbone.LayoutManager.configure({
 	render: function(template, context) {
 		return Mustache.render(template, context);
@@ -12,7 +11,6 @@ Backbone.LayoutManager.View.prototype.serialize = function() {
 var app = {};
 
 jQuery(function($) {
-
 	var Router = Backbone.Router.extend({
 		routes: {
 			"": "index",
@@ -20,6 +18,7 @@ jQuery(function($) {
 		},
 
 		index: function() {
+			alert("her");
 			var main = new Backbone.LayoutManager({
 				template: "#main"
 			});

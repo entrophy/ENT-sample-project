@@ -1,9 +1,27 @@
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
 App = {
 	url: function(url) {
 		return 'http://localhost/ENT-sample-project/'+url;
 	}
 }
 
+Backbone.emulateJSON = true;
 TemplateManager = {
 	init: function(key, callback) {
 		var self = this;
@@ -27,7 +45,6 @@ TemplateManager = {
 
 Link = Backbone.Model.extend({
 	defaults: {
-		id: 0,
 		title: '',
 		url: ''
 	}
@@ -36,77 +53,83 @@ Link = Backbone.Model.extend({
 // collections
 
 LinkCollection = Backbone.Collection.extend({
+	url: App.url('api/links'),
 	model: Link
 });
 
 // views
 
 LinkListView = Backbone.View.extend({
+	events: {
+		"submit .create form": "create"
+	},
 	initialize: function() {
 		var self = this;
 		
-		this.el = $('#links');
 		this.ids = [];
 
-		this.collection.bind('add', this.render, this)
+		this.collection.on('reset', this.render, this);
+		this.collection.on('add', this.render, this);
+		this.collection.on('remove', this.remove, this);
+	},
+	create: function() {
+		var values = this.$el.find('.create form').serializeObject();
+		this.$el.find('.create form').find('input').val('');
+		this.collection.create(values);
+		return false;
+	},
+	remove: function(link) {
+		this.$el.find('#link-'+link.id).remove();
 	},
 	render: function() {
+		var self = this;
 		_.forEach(this.collection.models, function(link) {
 			if (!_.include(this.ids, link.id)) {
-				this.el.append(new window.LinkItemView({ model: link }).render().el);
+				this.$el.find('#links').append(new window.LinkItemView({ 
+					model: link,
+					collection: self.collection,
+					id: 'link-'+link.id		
+				}).render().el);
 				this.ids.push(link.id);
 			}
 		}, this);
+		
+		this.$el.find('#links').sortable();
 
 		return this;
 	}
 });
 
 LinkItemView = Backbone.View.extend({
+	tagName: 'li',
+	className: 'link',
+	events: {
+		"click .delete": "remove"
+	},
+	remove: function() {
+		this.model.destroy();
+		this.collection.remove(this.model);
+		return false;
+	},
 	initialize: function() {
+		this.id = 'link-'+this.model.id;
 		this.template = TemplateManager.get('member/link/item');
 	},
 	render: function() {
-		this.el = Mustache.render(this.template, this.model.toJSON());
-
+		this.$el.html(Mustache.render(this.template, this.model.toJSON()));
 		return this;
 	}
 });
 
-// dispatch
+$(document).ready(function () {
+	TemplateManager.init('member/link/item', function(templates) {
+		links = new LinkCollection();
 
-TemplateManager.init('member/link/item', function(templates) {
-	links = new LinkCollection();
+		linkListView = new window.LinkListView({
+			el: '#page-content',
+			collection: links
+		});
 
-	linkListView = new window.LinkListView({
-		collection: links
+		links.fetch();
 	});
-
-	links.add([
-		new Link({
-			id: 8,
-			title: 'Google',
-			url: 'http://www.google.dk/'
-		}),
-		new Link({
-			id: 7,
-			title: 'Reddit',
-			url: 'http://www.reddit.com/'
-		}),
-		new Link({
-			id: 9,
-			title: 'Anti Sleep Pilot',
-			url: 'http://www.antisleeppilot.com/'
-		}),
-		new Link({
-			id: 10,
-			title: 'Imgur',
-			url: 'http://www.imgur.com/'
-		}),
-		new Link({
-			id: 11,
-			title: 'Politiken',
-			url: 'http://www.politiken.dk/'
-		})
-	]);
 });
